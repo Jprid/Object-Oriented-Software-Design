@@ -1,0 +1,419 @@
+# Final Midterm Review
+# John Pridmore
+
+### SOLID principles:
+
+#### 1. Single-responsiblity principle
+
+	* a class should have 1 responsibility
+	* therefore, changes to other responsiblities should not require changes
+		in a class
+
+#### 2. Open-Close principle
+
+	* software entities should be open for extension, but closed for modification
+	* ex. all field variables of an object should be __private__
+
+#### 3. Liskov substitution principle:
+
+	* an object and a subtype of the object should be indistinguishable to client
+		code
+
+#### 4. Interface segregation principles:
+
+	* clients should not be forced to depend on methods it does not use
+	* splits interfaces into smaller, more specific ones
+
+#### 5. Dependency Inversion Principle
+
+	* High-level modules should not depend on low-level modules. Both should depend
+		on abstractions.
+	* Abstractions should not depend on details. Details should depend on
+		abstractions.
+
+### UML:
+
+  1. Object Diagrams:
+
+  2. Sequence Diagrams:
+
+  3. Class Diagrams:
+
+### Relationships:
+
+#### Composition:
+	* there is a field type that is a class: holds a reference to another object
+		The relationship between these two objects is __association__
+	* ex: chair has legs, brick wall is composed of bricks and mortar
+	* Composition implies a relationship where the child cannot exist independent of
+		the parent. Example: House (parent) and Room (child). Rooms don't exist
+		separate to a House.
+
+#### Inheritance:
+	* when inheriting from a class, it accepts responsibility for all of the messages
+		that the superclass can send, not only the ones it receives
+	*  Inheritance relationships __should not cross domain boundaries (implementation domain vs application domain)__. Making CustomerGroup inherit from ArrayList<Customer> but also from (say) DemographicSegment tangles the two subdomains
+
+#### Aggregation:
+
+	* implies a relationship where the child can exist independently of the parent.
+		Example: Class (parent) and Student (child). Delete the Class and the Students still exist.
+	* Dependency is a form of association.
+
+---
+
+## FINAL REVIEW
+
+### Sample Questions
+
+#### Subtyping/Subclasses/Inheritance:
+
+  __Ex. 1.1: which of these (1-4) fails? (runtime or compile time error?)__
+
+  ```Java
+  public interface IInterface{}
+  public class A implements IInterface{ }
+  public class B implements IInterface{ }
+
+  public static void main(String[] args){
+    IInterface a = new A();
+    IInterface b = new B();
+
+    /*1.*/ A a1 = (A) b;
+    /*2.*/ A a2 = a;
+    /*3.*/ B b1 = (B) new A();
+    /*4.*/ A a3 = (A) a;
+  }
+  ```
+
+  __Ex. 1.2: which of these stmnts is true?__
+
+
+  ```Java
+  public class C {
+    public int _i;
+    public boolean _j;
+    public C(int i, boolean j) {
+      _i = i;
+      _j = j;
+    }
+    public boolean equals(Object that){
+      if(that == null || !(that instanceof C))
+        return false;
+      C thatC = (C) that;
+      return this._i == thatC._i &&
+             this._j == thatC._j;
+    }
+  }
+  public static void main(String[] args){
+    // QUESTION: which of these stmnts is true?
+    C c1 = new C(22, false);
+    C c2 = c1;
+    C c3 = new C(22, false);
+    /*1.*/ c1 == c2;
+    /*2.*/ c1.equals(c2);
+    /*3.*/ c1 == c3;
+    /*4.*/ c1.equals(c3);
+  }
+  ```
+
+  __Ex. 1.3: what is this code's output?__
+
+
+  ```Java
+  class A {
+    A() { System.out.println("A()"); }
+  }
+  class B extends A {
+    B() { System.out.println("B()"); }
+  }
+  class C extends B { }
+  class Main {
+    public static void main(String[] args){
+      A obj = new C();
+    }
+  }
+  ```
+
+  __Ex. 1.4:__ what is this code's output?
+
+  ```Java
+  class A {
+    static void s() { System.out.println("A.s()"); }
+  }
+  class B extends A {
+    static void s() { System.out.println("B.s()"); }
+  }
+  class C extends B { }
+  class Main {
+    public static void main(String[] args){
+      // QUESTION: what is output?
+      A obj = new C();
+      obj.s();
+    }
+  }
+  ```
+
+  __Ex. 1.4: what is this code's output?__
+
+  Note: static methods only look at the static type, therefore since the static type of obj is A, it will call A.s()
+
+  ```Java
+  A.s()
+  ```
+
+
+  __Ex. 1.5: what is this code's output?__
+
+```Java
+Interface I {
+  String world();
+}
+
+abstract class C implements I {
+  public String hello() { return "Hello "; }
+  abstract public String world();
+}
+
+class D extends C {
+  public String hello() { return "World "; }
+  public String world() { return super.hello() + hello(); }
+}
+
+class E extends D {
+  public String hello() { return "Mundo "; }
+}
+
+public class Inheritance1{
+  public static void main(String[] args) {
+    I x = new D();
+    System.out.println(x.world());
+    I y = new E();
+    System.out.println(y.world());
+  }
+}
+```
+
+__1.6: what is the output?__
+
+```Java
+class A {
+  void m() { System.out.println("A.m()"); }
+}
+class B extends A {
+  void m() { System.out.println("B.m()"); }
+}
+class C extends B {
+  void m() { System.out.println("C.m()"); }
+}
+public class Inheritance2{
+  public static void main(String[] args) {
+    A obj = new C();
+    obj.m();
+  }
+}
+```
+
+__1.7: what is the output__
+
+```Java
+class A {
+  void m() { System.out.println("A.m()");}
+}
+class B extends A {
+  void m() { System.out.println("B.m()"); }
+  void f() {
+    this.m();
+    super.m();
+    A a = (A) this;
+    a.m();
+}
+class C extends B {
+  void m() { System.out.println("C.m()"); }
+}
+public class Inheritance3 {
+  public static void main(String[] args){
+    A obj = new C();
+    ((B)obj).f();
+    }
+  }
+}
+```
+
+#### Class Diagram:
+
+```Java
+interface ISithLord { }
+interface ILightSaber { }
+interface ISithPower { }
+interface IJedi {
+  void fightSithLord(ISithLord sithLord);
+}
+class Jedi implements IJedi {
+  ILightSaber _lightSaber; // lightsaber held exclusively
+}
+class SithLord extends Jedi implements ISithLord {
+  List<ISithPower> powers; //List held exclusively, but not the individual powers.
+  public void addPower(ISithPower power) { powers.add(power); }
+  public void removePower(ISithPower power){ powers.remove(power); }
+}
+```
+
+### 2. Refactoring Problems:
+
+#### 2.0: Add a static factory for the following code:
+
+```Java
+public interface IPasswordHasher {
+  public String hash();
+}
+class SHA256 implements IPasswordHasher {
+  private String _password;
+  SHA256(String password) { _password = password; }
+  public String hash() {
+    String salt = Util.getSalt(_password);
+    return getHashedPassword(_password, salt);
+  }
+  public String getHashedPassword(String password, String salt){
+     // SHA-256 Hashing Algorithm
+  }
+}
+class MD5 implements IPasswordHasher {
+  private String _password;
+  MD5(String password) { _password = password; }
+  public String hash() {
+    String salt = Util.getSalt(_password);
+    return getHashedPassword(_password, salt);
+  }
+  public String getHashedPassword(String password, String salt){
+     // MD5 Hashing Algorithm
+  }
+}
+```
+
+#### 2.1: Refactor the above code to use strategy (also refactor factory):
+
+
+
+#### 2.2: Refactor above code to use Template Pattern (factory too):
+
+
+
+## __Solutions:__
+
+__1.1: which of these statements is valid? if invalid, compile or runtime error?__
+
+  ```Java
+  A a1 = (A) b;       /*1. runtime: can't "cross-cast" between two classes */
+  A a2 = a;           /*2. compile: can't instantiate interface            */
+  B b1 = (B) new A(); /*3. compile: can't cast A to B (insuffic. relation) */
+  A a3 = (A) a;       /*4. no error                                        */
+  ```
+__1.2: which of these statements evaluate to true?__
+
+  ```Java
+  c1 == c2;       /*1. true  */
+  c1.equals(c2);  /*2. true  */
+  c1 == c3;       /*2. false */
+  c1.equals(c3);  /*2. true  */
+  ```
+
+__1.3: What is the output?__
+
+  Note: any call to a constructor starts with a call to super();
+
+  ```
+  "A()"
+  "B()"
+  ```
+
+__1.4: What is output?__
+  ```
+  "A.s()"
+  ```
+
+__1.5: What is output?__
+
+  ```
+  Hello World
+  Hello Mundo
+  ```
+
+__1.6: Output:__
+  ```
+  C.m()
+  ```
+
+__(**) 1.7 Outputs:__
+
+  __Note: "this" always refers to the calling object's dynamic type__
+
+  ```
+  C.m()
+  A.m()
+  C.m()
+  ```
+
+#### 2.0: add static factory to the following code:
+
+  ```Java
+  public class passwordHasherFactory{
+    public static IPasswordHasher createMD5(String password){
+      return new MD5(password);
+    }
+    public static IPasswordHasher createSHA256(String password){
+      return new SHA256(password);
+    }
+  }
+  ```
+
+#### 2.1: refactor the above code to use Strategy (factory aswell):
+
+```Java
+/*----------------CLIENT CODE-----------------------------*/
+class PasswordHasher {
+  private String _password;
+  private IHasherAlgorithm hasher;
+  PasswordHasher(String password, IHasherAlgorithm alg){
+    _password = password;
+    hasher = alg;
+  }
+  public String hash(){
+    String salt = Util.getSalt(_password);
+    return hasher.getHashedPassword(_password, salt);
+  }
+}
+
+/*----------------STRATEGY OBJECTS-------------------------*/
+
+public interface IHasherAlgorithm{
+  public String getHashedPassword(String password, String salt);
+}
+
+class SHA256 implements IHasherAlgorithm{
+  public String getHashedPassword(String password, String salt){
+    String result /* = SHA256 algorithm */
+    return result;
+  }
+}
+
+class MD5 implements IHasherAlgorithm{
+  public String getHashedPassword(String password, String salt){
+    String result; /* = MD5 */
+    return result;q
+  }
+}
+
+/*----------------FACTORY----------------------------------*/
+
+public class PasswordHasherFactory{
+  public static PasswordHasher createMD5(String password){
+    return new PasswordHasher(password, new MD5());
+  }
+  public static PasswordHasher createSHA256(String password){
+    return new PasswordHasher(password, new SHA256());
+  }
+}
+```
+
+#### 2.2:
